@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Generative Tree</title>
+		<style>
+			body { margin: 0; }
+			canvas { display: block; }
+			p {
+				position:absolute;
+				z-index1;
+				width:500px;
+				left:calc(50% - 250px);
+				bottom:30px;
+				font-family: monospace;
+				color:white;
+				background:black;
+				padding:2em;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container"></div>
+		<script src="../lib/three-r95.all.js"></script>
+		<script src="../lib/TubeGeometryNew.js"></script>
+		<script src="../lib/TubeRadialGeometry.js"></script>
+		<script src="../lib/OrbitControls-r95.js"></script>
+		<script src="../lib/Coordinates.js"></script>
+		<script src="../lib/dat.gui.min.js"></script>
+		<script src="../lib/jquery-1.8.3.min.js"></script>
+		<script src="../lib/perlin.js"></script>
+		<script src="../lib/threejs-particle-shader-master/src/particles.js"></script>
+		<script type="text/x-glsl" id="vertex">
+			varying vec3 vNormal;
+			varying vec3 vViewPosition;
+
+			uniform vec2 amplitude;
+			void main() {
+				vec3 newPosition = position;
+
+				//function of ampliltude based on height, higher up more movement, used a quadratic form
+				float factor = newPosition.y * newPosition.y/ 90000.0;
+				newPosition.x = newPosition.x + amplitude.x * factor;
+				newPosition.z = newPosition.z + amplitude.y * factor;
+
+				vec3 newNormal = newPosition;
+
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
+				vNormal = normalize( normalMatrix * newNormal );
+				vec4 mvPosition = modelViewMatrix * vec4( newPosition, 1.0 );
+				vViewPosition = -mvPosition.xyz;
+			}
+		</script>
+		<script type="text/x-glsl" id="fragment">
+			uniform vec3 uMaterialColor;
+			uniform vec3 uSpecularColor;
+
+			uniform vec3 uDirLightPos;
+			uniform vec3 uDirLightColor;
+
+			uniform vec3 uAmbientLightColor;
+
+			uniform float uKd;
+			uniform float uBorder;
+
+			varying vec3 vNormal;
+			varying vec3 vViewPosition;
+
+			void main() {
+				// compute direction to light
+				vec4 lDirection = viewMatrix * vec4( uDirLightPos, 0.0 );
+				vec3 lVector = normalize( lDirection.xyz );
+
+				// diffuse: N * L. Normal must be normalized, since it's interpolated.
+				vec3 normal = normalize( vNormal );
+
+				// this diffuse value accordingly.
+				float diffuse = max( dot( normal, lVector ), 0.0);
+				if(diffuse >= uBorder){
+					gl_FragColor = vec4(uMaterialColor, 1.0 );
+				}else{
+					gl_FragColor = vec4(uAmbientLightColor, 1.0 );
+				}
+
+			}
+		</script>
+
+		<script type="text/x-glsl" id="vertexleaf">
+			uniform vec3 uMaterialColor;
+			uniform vec3 uSpecularColor;
+
+			uniform vec3 uDirLightPos;
+			uniform vec3 uDirLightColor;
+
+			uniform vec3 uAmbientLightColor;
+
+			uniform float uKd;
+			uniform float uBorder;
+
+			varying vec3 vNormal;
+			varying vec3 vViewPosition;
+
+			void main() {
+				// compute direction to light
+				vec4 lDirection = viewMatrix * vec4( uDirLightPos, 0.0 );
+				vec3 lVector = normalize( lDirection.xyz );
+
+				// diffuse: N * L. Normal must be normalized, since it's interpolated.
+				vec3 normal = normalize( vNormal );
+
+				// this diffuse value accordingly.
+				float diffuse = max( dot( normal, lVector ), 0.0);
+				if(diffuse >= uBorder){
+					gl_FragColor = vec4(uMaterialColor, 1.0 );
+				}else{
+					gl_FragColor = vec4(uAmbientLightColor, 1.0 );
+				}
+
+			}
+		</script>
+		<script type="text/x-glsl" id="fragmentleaf">
+			uniform vec3 uMaterialColor;
+			uniform vec3 uSpecularColor;
+
+			uniform vec3 uDirLightPos;
+			uniform vec3 uDirLightColor;
+
+			uniform vec3 uAmbientLightColor;
+
+			uniform float uKd;
+			uniform float uBorder;
+
+			varying vec3 vNormal;
+			varying vec3 vViewPosition;
+
+			void main() {
+				// compute direction to light
+				vec4 lDirection = viewMatrix * vec4( uDirLightPos, 0.0 );
+				vec3 lVector = normalize( lDirection.xyz );
+
+				// diffuse: N * L. Normal must be normalized, since it's interpolated.
+				vec3 normal = normalize( vNormal );
+
+				// this diffuse value accordingly.
+				float diffuse = max( dot( normal, lVector ), 0.0);
+				if(diffuse >= uBorder){
+					gl_FragColor = vec4(uMaterialColor, 1.0 );
+				}else{
+					gl_FragColor = vec4(uAmbientLightColor, 1.0 );
+				}
+
+			}
+		</script>
+		<script src="tree.js"></script>
+		<p>drag to orbit, right click to pan, reload to see new colors and shapes! :)</p>
+	</body>
+</html>
