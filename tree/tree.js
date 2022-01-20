@@ -6,7 +6,16 @@
 
 //initialize renderer and camera variables
 var camera, scene, renderer;
-var cameraControls, effectController;
+var cameraControls;
+var effectController = {
+	border: 0.5,
+	kd: 0.4,
+	branchRegion: 0.35,
+	smallbranch: 0.7,
+	trunklength: 300,
+	trunkwidth: 30,
+	leaffallchance: 2
+};
 var clock = new THREE.Clock();
 var ambientLight, light;
 var ground;
@@ -98,8 +107,9 @@ function init() {
   scene.add(ambientLight);
   scene.add(light);
   // GUI
-  setupGui();
-
+	if(window.innerWidth > 800){
+  	setupGui();
+	}
 	//shaders
 	var materialColor = new THREE.Color();
 	materialColor = new THREE.Color(colors[2]);
