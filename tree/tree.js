@@ -107,7 +107,7 @@ function init() {
   scene.add(ambientLight);
   scene.add(light);
   // GUI
-	if(window.innerWidth > 800){
+	if(window.innerWidth > 900){
   	setupGui();
 	}
 	//shaders
