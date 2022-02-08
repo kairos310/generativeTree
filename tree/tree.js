@@ -107,7 +107,7 @@ function init() {
   scene.add(ambientLight);
   scene.add(light);
   // GUI
-	if(inIframe){
+	if(window.innerWidth > 800){
   	setupGui();
 	}
 	//shaders
@@ -125,13 +125,7 @@ function init() {
 
 	fillScene();
 }
-function inIframe () {
-    try {
-        return window.self !== window.top;
-    } catch (e) {
-        return true;
-    }
-}
+
 function setupGui() {
   effectController = {
 		border: 0.5,
